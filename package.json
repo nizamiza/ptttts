@@ -4,9 +4,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "http-server -c-1 -p 8080"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/pixi.js": "^5.0.0",
+    "http-server": "^14.1.1",
+    "typescript": "^5.4.5"
+  }
 }
