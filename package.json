@@ -1,5 +1,6 @@
 {
   "name": "ptttts",
+  "type": "module",
   "description": "Tic Tac Toe game written in Pixi.js and TypeScript",
   "version": "1.0.0",
   "main": "index.js",

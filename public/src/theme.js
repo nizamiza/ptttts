@@ -1,5 +1,5 @@
 export class Theme {
-  colors = {
+  static colors = {
     background: "midnightblue",
     text: "white",
     surface: {
@@ -21,6 +21,27 @@ export class Theme {
       background: "firebrick",
       text: "white",
       highlight: "red",
-    }
+    },
   };
+
+  static tint = {
+    default: 0xffffff,
+    hover: 0xcccccc,
+  };
+
+  static duration = {
+    click: 100,
+  };
+
+  get colors() {
+    return Theme.colors;
+  }
+
+  get tint() {
+    return Theme.tint;
+  }
+
+  get duration() {
+    return Theme.duration;
+  }
 }
