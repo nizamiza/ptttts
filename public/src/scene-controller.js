@@ -25,6 +25,7 @@ import { Utils } from "./utils.js";
  * @extends {AppController<SceneView>}
  */
 export class SceneController extends AppController {
+  static DEFAULT_BOARD_SIZE = 3;
   static PLAYERS = /** @type {const} */ ([0, 1]);
 
   state = SceneController.resetState();
@@ -35,11 +36,20 @@ export class SceneController extends AppController {
    * @param {number} [options.boardSize]
    */
   constructor(app, options) {
-    const { boardSize } = Utils.getOptions(options, { boardSize: 3 });
+    const { boardSize } = Utils.getOptions(options, {
+      boardSize: SceneController.DEFAULT_BOARD_SIZE,
+    });
 
     super(app, new SceneView(app, { gridSize: boardSize }));
 
     this.boardSize = boardSize;
+    SceneView.sounds.hit.volume = 0.15;
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "r") {
+        this.reset();
+      }
+    });
   }
 
   /**
@@ -59,6 +69,7 @@ export class SceneController extends AppController {
     this.state.currentPlayer = player === 0 ? 1 : 0;
 
     this.view.drawPlayer(cell);
+    SceneView.sounds.hit.play();
   }
 
   /**
@@ -132,7 +143,7 @@ export class SceneController extends AppController {
    * @param {number} [boardSize]
    * @returns {State}
    */
-  static resetState(boardSize = 3) {
+  static resetState(boardSize = SceneController.DEFAULT_BOARD_SIZE) {
     const resetScore = () => ({
       rows: Array.from({ length: boardSize }, () => 0),
       cols: Array.from({ length: boardSize }, () => 0),

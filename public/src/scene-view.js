@@ -7,10 +7,27 @@ import { Utils } from "./utils.js";
  * @extends {AppView<import("./scene-controller.js").SceneController>}
  */
 export class SceneView extends AppView {
-  static noiseFilter = new NoiseFilter({
-    noise: 0.1,
-    resolution: 0.25,
-  });
+  static BOARD_MAX_SIZE = 480;
+
+  static filters = {
+    cellNoise: new NoiseFilter({
+      noise: 0.1,
+      resolution: 0.25,
+    }),
+    buttonNoise: new NoiseFilter({
+      noise: 0.1,
+      resolution: 0.75,
+    }),
+  };
+
+  static sounds = {
+    hit: /** @type {HTMLAudioElement} */ (
+      document.querySelector("audio#sound-hit")
+    ),
+    click: /** @type {HTMLAudioElement} */ (
+      document.querySelector("audio#sound-click")
+    ),
+  };
 
   /**
    * @param {import("pixi.js").Application} app
@@ -22,16 +39,16 @@ export class SceneView extends AppView {
    */
   constructor(app, options) {
     const { cellSize, gap, gridSize, position } = Utils.getOptions(options, {
-      cellSize: 120,
-      gap: 16,
       gridSize: 3,
     });
 
     super(app);
 
-    this.gap = gap;
-    this.cellSize = cellSize;
-    this.borderRadius = cellSize * 0.15;
+    this.cellSize =
+      cellSize ?? Math.min(SceneView.BOARD_MAX_SIZE / gridSize, 120);
+
+    this.gap = gap ?? this.cellSize * 0.15;
+    this.borderRadius = this.cellSize * 0.15;
     this.gridSize = gridSize;
     this.position = position;
 
@@ -137,6 +154,8 @@ export class SceneView extends AppView {
       .roundRect(0, 0, 100, 50, 8)
       .fill(this.theme.colors.accent.background);
 
+    button.filters = [SceneView.filters.buttonNoise];
+
     button.eventMode = "static";
     button.cursor = "pointer";
 
@@ -157,6 +176,7 @@ export class SceneView extends AppView {
 
     button.on("click", () => {
       this.controller?.reset();
+      SceneView.sounds.click.play();
     });
 
     button.position.set(
@@ -195,7 +215,7 @@ export class SceneView extends AppView {
    */
   drawCell(contexts, row, col) {
     const cell = new Graphics(contexts.base);
-    cell.filters = [SceneView.noiseFilter];
+    cell.filters = [SceneView.filters.cellNoise];
 
     cell.pivot.set(this.cellSize / 2, this.cellSize / 2);
     cell.position.set(

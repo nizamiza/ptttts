@@ -17,14 +17,64 @@
       align-items: center;
       min-height: 100vh;
       background-color: midnightblue;
+      image-rendering: pixelated;
+    }
+
+    img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
     }
 
     canvas {
       image-rendering: pixelated;
     }
+
+    #audio-control {
+      --size: 3rem;
+
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      width: var(--size);
+      height: var(--size);
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 
-<body></body>
+<body>
+  <audio id="sound-theme-loop" loop>
+    <source src="assets/sounds/musicfx-loop-2.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="sound-hit" src="assets/sounds/hit.wav" type="audio/wav"></audio>
+  <audio id="sound-click" src="assets/sounds/click.wav" type="audio/wav"></audio>
+  <button aria-label="Toggle music" id="audio-control" onclick="toggleMusic()">
+    <img id="icon-music-off" src="assets/svg/volume-x.svg" alt="Music is off" />
+    <img id="icon-music-on" src="assets/svg/volume-on.svg" alt="Music is on" hidden />
+  </button>
+  <script type="module">
+    function toggleMusic() {
+      const audio = document.getElementById("sound-theme-loop");
+      audio.volume = 0.25;
+      audio.paused ? audio.play() : audio.pause();
+
+      const iconMusicOff = document.getElementById("icon-music-off");
+      const iconMusicOn = document.getElementById("icon-music-on");
+
+      iconMusicOff.hidden = !iconMusicOff.hidden;
+      iconMusicOn.hidden = !iconMusicOn.hidden;
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "m") {
+        toggleMusic();
+      }
+    });
+  </script>
+</body>
 
 </html>
