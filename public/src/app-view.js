@@ -19,4 +19,6 @@ export class AppView {
   constructor(app) {
     this.app = app;
   }
+
+  draw() { }
 }

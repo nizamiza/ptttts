@@ -1,21 +1,29 @@
 /**
- * @template {import("./app-view.js").AppView} [View=any]
+ * @template {Record<string, import("./app-view.js").AppView>} [Views={}]
  */
 export class AppController {
   /** @type {import("pixi.js").Application} */
   app;
 
-  /** @type {View} */
-  view;
+  /** @type {Views} */
+  views;
 
   /**
    * @param {import("pixi.js").Application} app
-   * @param {View} view
+   * @param {Views} views
    */
-  constructor(app, view) {
+  constructor(app, views) {
     this.app = app;
-    this.view = view;
+    this.views = views;
 
-    view.controller = this;
+    for (const view of Object.values(this.views)) {
+      view.controller = this;
+    }
+  }
+
+  drawAll() {
+    for (const view of Object.values(this.views)) {
+      view.draw();
+    }
   }
 }

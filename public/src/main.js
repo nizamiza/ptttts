@@ -25,4 +25,4 @@ app.stage.addChild(bg);
 
 document.body.appendChild(app.canvas);
 
-scene.view.draw();
+scene.drawAll();

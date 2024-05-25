@@ -7,6 +7,10 @@ export const {
   GraphicsContext,
   NoiseFilter,
   Text,
+  MeshRope,
+  Point,
+  RenderTexture,
+  BlurFilter,
 } = PIXI;
 
 export default PIXI;

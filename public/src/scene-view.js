@@ -1,6 +1,15 @@
 import { Animations } from "./animations.js";
 import { AppView } from "./app-view.js";
-import { Graphics, GraphicsContext, NoiseFilter, Text } from "./pixijs.js";
+import {
+  Graphics,
+  GraphicsContext,
+  MeshRope,
+  NoiseFilter,
+  Point,
+  RenderTexture,
+  Text,
+} from "./pixijs.js";
+import { ScoreView } from "./score-view.js";
 import { Utils } from "./utils.js";
 
 /**
@@ -163,7 +172,8 @@ export class SceneView extends AppView {
       text: "Reset",
       style: {
         fill: this.theme.colors.accent.text,
-        fontSize: 16,
+        fontSize: 20,
+        fontFamily: this.theme.fonts.body,
       },
     });
 
@@ -192,20 +202,49 @@ export class SceneView extends AppView {
       text: "Tic Tac Toe!",
       style: {
         fill: this.theme.colors.text,
-        fontSize: 36,
+        fontSize: 48,
         fontWeight: "bold",
+        fontFamily: this.theme.fonts.title,
+        align: "center",
+        fontVariant: "small-caps",
+        dropShadow: {
+          color: this.theme.colors.black,
+          distance: 6,
+        },
       },
     });
 
-    title.position.set(
+    const texture = RenderTexture.create({
+      width: title.width,
+      height: title.height,
+    });
+
+    this.app.renderer.render({
+      container: title,
+      target: texture,
+    });
+
+    // curved text
+    const rope = new MeshRope({
+      texture,
+      points: [
+        new Point(0, 0),
+        new Point(title.width * 0.25, -title.height * 0.35),
+        new Point(title.width * 0.5, -title.height * 0.45),
+        new Point(title.width * 0.75, -title.height * 0.35),
+        new Point(title.width, 0),
+      ],
+    });
+
+    rope.position.set(
       this.app.screen.width / 2 - title.width / 2,
       this.app.screen.height / 2 -
       (this.gridSize * this.cellSize) / 2 -
       title.height -
-      this.gap * 6,
+      this.gap * 4,
     );
 
-    this.app.stage.addChild(title);
+    this.app.stage.addChild(rope);
   }
 
   /**

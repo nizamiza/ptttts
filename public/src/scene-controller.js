@@ -1,5 +1,6 @@
 import { AppController } from "./app-controller.js";
 import { SceneView } from "./scene-view.js";
+import { ScoreView } from "./score-view.js";
 import { Utils } from "./utils.js";
 
 /**
@@ -22,7 +23,7 @@ import { Utils } from "./utils.js";
  */
 
 /**
- * @extends {AppController<SceneView>}
+ * @extends {AppController<{ scene: SceneView; score: ScoreView }>}
  */
 export class SceneController extends AppController {
   static DEFAULT_BOARD_SIZE = 3;
@@ -40,7 +41,10 @@ export class SceneController extends AppController {
       boardSize: SceneController.DEFAULT_BOARD_SIZE,
     });
 
-    super(app, new SceneView(app, { gridSize: boardSize }));
+    super(app, {
+      scene: new SceneView(app, { gridSize: boardSize }),
+      score: new ScoreView(app),
+    });
 
     this.boardSize = boardSize;
     SceneView.sounds.hit.volume = 0.15;
@@ -62,14 +66,20 @@ export class SceneController extends AppController {
       return;
     }
 
-    const player = this.state.currentPlayer;
-    this.state.board[row][col] = player;
+    if (this.checkWinner() === undefined) {
+      const player = this.state.currentPlayer;
+      this.state.board[row][col] = player;
 
-    this.updateScore(row, col);
-    this.state.currentPlayer = player === 0 ? 1 : 0;
+      this.updateScore(row, col);
+      this.state.currentPlayer = player === 0 ? 1 : 0;
 
-    this.view.drawPlayer(cell);
-    SceneView.sounds.hit.play();
+      this.views.scene.drawPlayer(cell);
+      this.views.score.draw();
+
+      SceneView.sounds.hit.play();
+
+      this.views.score.playVictoryAnimation(this.checkWinner());
+    }
   }
 
   /**
@@ -106,7 +116,7 @@ export class SceneController extends AppController {
       (maxScore) => maxScore === this.boardSize,
     );
 
-    return winner > 0 ? SceneController.PLAYERS[winner] : undefined;
+    return winner >= 0 ? SceneController.PLAYERS[winner] : undefined;
   }
 
   getMaxScores() {
@@ -125,8 +135,12 @@ export class SceneController extends AppController {
   }
 
   reset() {
+    if (this.views.score.isPlayingVictoryAnimation) {
+      return;
+    }
+
     this.state = SceneController.resetState(this.boardSize);
-    this.view.draw();
+    this.views.scene.draw();
   }
 
   /**

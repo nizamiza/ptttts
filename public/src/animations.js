@@ -24,10 +24,6 @@ export class Animations {
 
     particleSize = particleSize ?? size * 0.1;
 
-    const particleContext = new GraphicsContext()
-      .rect(0, 0, particleSize, particleSize)
-      .fill(color);
-
     const container = new Graphics().rect(0, 0, size, size);
 
     const ticker = new EphemeralTicker({
@@ -38,7 +34,9 @@ export class Animations {
     const motionRadius = size * 0.75;
 
     Array.from({ length: count }).forEach(() => {
-      const particle = new Graphics(particleContext);
+      const particle = new Graphics()
+        .rect(0, 0, particleSize, particleSize)
+        .fill(color === "random" ? Theme.randomColor() : color);
 
       const initialPos = Utils.randomNumber(
         motionRadius * 0.5,
