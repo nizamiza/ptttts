@@ -52,6 +52,7 @@ export class SceneController extends AppController {
     document.addEventListener("keydown", (event) => {
       if (event.key === "r") {
         this.reset();
+        SceneView.sounds.click.play();
       }
     });
   }
@@ -140,7 +141,7 @@ export class SceneController extends AppController {
     }
 
     this.state = SceneController.resetState(this.boardSize);
-    this.views.scene.draw();
+    this.drawAll();
   }
 
   /**
